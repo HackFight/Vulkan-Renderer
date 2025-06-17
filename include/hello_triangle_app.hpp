@@ -4,6 +4,7 @@
 #include "vr_pipeline.hpp"
 #include "vr_device.hpp"
 #include "vr_swap_chain.hpp"
+#include "vr_model.hpp"
 
 // std
 #include <memory>
@@ -26,6 +27,7 @@ namespace vr
 
 
     private:
+        void LoadModels();
         void CreatePipelineLayout();
         void CreatePipeline();
         void CreateCommandBuffers();
@@ -37,5 +39,6 @@ namespace vr
         std::unique_ptr<VrPipeline> vrPipeline;
         VkPipelineLayout pipelineLayout;
         std::vector<VkCommandBuffer> commandBuffers;
+        std::unique_ptr<VrModel> vrModel;
 	};
 }

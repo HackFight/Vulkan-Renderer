@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vr_device.hpp"
+#include "vr_model.hpp"
 
 // std
 #include <string>

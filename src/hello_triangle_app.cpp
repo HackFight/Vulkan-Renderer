@@ -8,6 +8,7 @@ namespace vr
 {
 	HelloTriangleApp::HelloTriangleApp()
 	{
+		LoadModels();
 		CreatePipelineLayout();
 		CreatePipeline();
 		CreateCommandBuffers();
@@ -27,6 +28,21 @@ namespace vr
 		}
 
 		vkDeviceWaitIdle(vrDevice.device());
+	}
+
+	void HelloTriangleApp::LoadModels()
+	{
+		std::vector<VrModel::Vertex> vertices
+		{
+			{{-0.5f, -0.5f}},
+			{{-0.5f,  0.5f}},
+			{{ 0.5f,  0.5f}},
+			{{-0.5f, -0.5f}},
+			{{ 0.5f,  0.5f}},
+			{{ 0.5f, -0.5f}}
+		};
+
+		vrModel = std::make_unique<VrModel>(vrDevice, vertices);
 	}
 
 	void HelloTriangleApp::CreatePipelineLayout() {
@@ -97,7 +113,8 @@ namespace vr
 			vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
 			vrPipeline->Bind(commandBuffers[i]);
-			vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
+			vrModel->Bind(commandBuffers[i]);
+			vrModel->Draw(commandBuffers[i]);
 
 			vkCmdEndRenderPass(commandBuffers[i]);
 			if (vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS)
