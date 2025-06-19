@@ -21,7 +21,7 @@ namespace vr
         ~HelloTriangleApp();
 
         HelloTriangleApp(const HelloTriangleApp&) = delete;
-        void operator=(const HelloTriangleApp&) = delete;
+        HelloTriangleApp& operator=(const HelloTriangleApp&) = delete;
 
         void Run();
 
@@ -29,13 +29,16 @@ namespace vr
     private:
         void LoadModels();
         void CreatePipelineLayout();
+        void RecreateSwapChain();
         void CreatePipeline();
         void CreateCommandBuffers();
+        void FreeCommandBuffers();
         void DrawFrame();
+        void RecordCommandBuffer(int imageIndex);
 
         VrWindow vrWindow{WIDTH, HEIGHT, "Hello Vulkan Triangle"};
         VrDevice vrDevice{ vrWindow };
-        VrSwapChain vrSwapChain{ vrDevice, vrWindow.GetExtent() };
+        std::unique_ptr<VrSwapChain> vrSwapChain;
         std::unique_ptr<VrPipeline> vrPipeline;
         VkPipelineLayout pipelineLayout;
         std::vector<VkCommandBuffer> commandBuffers;

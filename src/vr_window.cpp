@@ -8,7 +8,6 @@ namespace vr
 	{
 		InitWindow();
 	}
-
 	VrWindow::~VrWindow()
 	{
 		glfwDestroyWindow(window);
@@ -27,8 +26,18 @@ namespace vr
 	{
 		glfwInit();
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
 		window = glfwCreateWindow(width, height, name.c_str(), nullptr, nullptr);
+		glfwSetWindowUserPointer(window, this);
+		glfwSetFramebufferSizeCallback(window, FrameBufferResizedCallback);
+	}
+
+	void VrWindow::FrameBufferResizedCallback(GLFWwindow* window, int width, int height)
+	{
+		auto vrWindow = reinterpret_cast<VrWindow*>(glfwGetWindowUserPointer(window));
+		vrWindow->frameBufferResized = true;
+		vrWindow->width = width;
+		vrWindow->height = height;
 	}
 }

@@ -15,17 +15,21 @@ namespace vr
 		~VrWindow();
 
 		VrWindow(const VrWindow&) = delete;
-		void operator=(const VrWindow&) = delete;
+		VrWindow& operator=(const VrWindow&) = delete;
 
 		bool ShouldClose() { return glfwWindowShouldClose(window); }
 		VkExtent2D GetExtent() { return { static_cast<uint32_t>(width), static_cast<uint32_t>(height) }; }
+		bool WasWindowResized() { return frameBufferResized; }
+		void ResetWindowResizedFlag() { frameBufferResized = false; }
 
 		void CreateWindowSurface(VkInstance instance, VkSurfaceKHR* surface);
 
 	private:
 		void InitWindow();
+		static void FrameBufferResizedCallback(GLFWwindow* window, int width, int height);
 
-		const int width, height;
+		int width, height;
+		bool frameBufferResized;
 		const std::string name;
 		GLFWwindow* window;
 	};

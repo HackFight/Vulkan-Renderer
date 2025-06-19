@@ -8,6 +8,7 @@
 // std lib headers
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace vr {
 
@@ -16,10 +17,11 @@ class VrSwapChain {
   static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
   VrSwapChain(VrDevice &deviceRef, VkExtent2D windowExtent);
+  VrSwapChain(VrDevice& deviceRef, VkExtent2D windowExtent, std::shared_ptr<VrSwapChain> previous);
   ~VrSwapChain();
 
   VrSwapChain(const VrSwapChain &) = delete;
-  void operator=(const VrSwapChain &) = delete;
+  VrSwapChain& operator=(const VrSwapChain &) = delete;
 
   VkFramebuffer getFrameBuffer(int index) { return swapChainFramebuffers[index]; }
   VkRenderPass getRenderPass() { return renderPass; }
@@ -38,7 +40,8 @@ class VrSwapChain {
   VkResult acquireNextImage(uint32_t *imageIndex);
   VkResult submitCommandBuffers(const VkCommandBuffer *buffers, uint32_t *imageIndex);
 
- private:
+private:
+  void init();
   void createSwapChain();
   void createImageViews();
   void createDepthResources();
@@ -69,6 +72,7 @@ class VrSwapChain {
   VkExtent2D windowExtent;
 
   VkSwapchainKHR swapChain;
+  std::shared_ptr<VrSwapChain> oldSwapChain;
 
   std::vector<VkSemaphore> imageAvailableSemaphores;
   std::vector<VkSemaphore> renderFinishedSemaphores;

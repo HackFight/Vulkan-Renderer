@@ -13,12 +13,24 @@ namespace vr {
 
 VrSwapChain::VrSwapChain(VrDevice &deviceRef, VkExtent2D extent)
     : device{deviceRef}, windowExtent{extent} {
-  createSwapChain();
-  createImageViews();
-  createRenderPass();
-  createDepthResources();
-  createFramebuffers();
-  createSyncObjects();
+    init();
+}
+
+VrSwapChain::VrSwapChain(VrDevice& deviceRef, VkExtent2D extent, std::shared_ptr<VrSwapChain> previous)
+    : device{ deviceRef }, windowExtent{ extent }, oldSwapChain{ previous } {
+    init();
+
+    oldSwapChain = nullptr;
+}
+
+void VrSwapChain::init()
+{
+    createSwapChain();
+    createImageViews();
+    createRenderPass();
+    createDepthResources();
+    createFramebuffers();
+    createSyncObjects();
 }
 
 VrSwapChain::~VrSwapChain() {
@@ -166,7 +178,7 @@ void VrSwapChain::createSwapChain() {
   createInfo.presentMode = presentMode;
   createInfo.clipped = VK_TRUE;
 
-  createInfo.oldSwapchain = VK_NULL_HANDLE;
+  createInfo.oldSwapchain = oldSwapChain == nullptr ? VK_NULL_HANDLE : oldSwapChain->swapChain;
 
   if (vkCreateSwapchainKHR(device.device(), &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
     throw std::runtime_error("failed to create swap chain!");
